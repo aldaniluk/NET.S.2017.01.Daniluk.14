@@ -6,6 +6,10 @@ using System.Text;
 
 namespace Logic
 {
+    /// <summary>
+    /// Generic collection set.
+    /// </summary>
+    /// <typeparam name="T">Type for substitution.</typeparam>
     public class Set<T> : ISet<T> where T: class, IEquatable<T>
     {
         #region fields      
@@ -15,18 +19,37 @@ namespace Logic
         #endregion
 
         #region properties
+        /// <summary>
+        /// Returns true, if set can't be modified, and false otherwise.
+        /// </summary>
         public bool IsReadOnly => false;
+
+        /// <summary>
+        /// Quantity of elements.
+        /// </summary>
         public int Count => count;
+
+        /// <summary>
+        /// Returns true, if set is empty, and false otherwise.
+        /// </summary>
         public bool IsEmpty => count == 0;
+
         private bool IsFull => count == capacity;
         #endregion
 
         #region ctors
+        /// <summary>
+        /// Ctor without parameters.
+        /// </summary>
         public Set()
         {
             array = new T[capacity];
         }
 
+        /// <summary>
+        /// Ctor with parameter.
+        /// </summary>
+        /// <param name="capacity">Initial size of set.</param>
         public Set(int capacity)
         {
             if (capacity <= 0) throw new ArgumentException($"{nameof(capacity)} is unsuitable.");
@@ -35,6 +58,10 @@ namespace Logic
             array = new T[capacity];
         }
 
+        /// <summary>
+        /// Ctor with parameter.
+        /// </summary>
+        /// <param name="collection">Collection to copy elements into set.</param>
         public Set(IEnumerable<T> collection)
         {
             if (ReferenceEquals(collection, null)) throw new ArgumentNullException($"{nameof(collection)} is null.");
@@ -47,6 +74,10 @@ namespace Logic
         #endregion
 
         #region enumerator
+        /// <summary>
+        /// Enumerator for set.
+        /// </summary>
+        /// <returns>Object IEnumerator<T> to iterate.</returns>
         public IEnumerator<T> GetEnumerator()
         {
             for(int i = 0; i < count; i++)
@@ -60,6 +91,11 @@ namespace Logic
 
         #region public methods
         #region Add, Remove, Contains, Clear
+        /// <summary>
+        /// Adds an element into the set.
+        /// </summary>
+        /// <param name="item">Element to add.</param>
+        /// <returns>True, if element was added, and false otherwise.</returns>
         public bool Add(T item)
         {
             if (ReferenceEquals(item, null)) throw new ArgumentNullException($"{nameof(item)} is null.");
@@ -75,7 +111,12 @@ namespace Logic
 
         void ICollection<T>.Add(T item) => Add(item);
 
-        public bool Remove(T item) //Удаляет первое вхождение указанного объекта из коллекции
+        /// <summary>
+        /// Removes an element from the set.
+        /// </summary>
+        /// <param name="item">Element to remove.</param>
+        /// <returns>True, if element was removed, and false otherwise.</returns>
+        public bool Remove(T item)
         {
             if (!Contains(item)) return false;
 
@@ -90,6 +131,11 @@ namespace Logic
             return true;
         }
 
+        /// <summary>
+        /// Checks the presence of the element in the set.
+        /// </summary>
+        /// <param name="item">Element to check.</param>
+        /// <returns>True, if element presents, and false otherwise.</returns>
         public bool Contains(T item)
         {
             for (int i = 0; i < count; i++)
@@ -100,7 +146,10 @@ namespace Logic
             return false;
         }
 
-        public void Clear() //Удаляет все элементы из коллекции ICollection<T>
+        /// <summary>
+        /// Clears the set.
+        /// </summary>
+        public void Clear()
         {
             this.count = 0;
             this.capacity = 8;
@@ -109,6 +158,10 @@ namespace Logic
         #endregion
 
         #region UnionWith, IntersectWith, ExceptWith, SymmetricExceptWith
+        /// <summary>
+        /// Modifies the current set so that it contains all elements that are present in the in both collections.
+        /// </summary>
+        /// <param name="other">Other collection.</param>
         public void UnionWith(IEnumerable<T> other)
         {
             if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
@@ -119,6 +172,10 @@ namespace Logic
             }
         }
 
+        /// <summary>
+        /// Modifies the current set so that it contains only elements that are also in a specified collection.
+        /// </summary>
+        /// <param name="other">Other collection.</param>
         public void IntersectWith(IEnumerable<T> other)
         {
             if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
@@ -130,7 +187,11 @@ namespace Logic
             }
         }
 
-        public void ExceptWith(IEnumerable<T> other) //Удаляет все элементы указанной коллекции из текущего набора.
+        /// <summary>
+        /// Removes all elements in the specified collection from the current set.
+        /// </summary>
+        /// <param name="other">Other collection.</param>
+        public void ExceptWith(IEnumerable<T> other) 
         {
             if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
 
@@ -140,7 +201,11 @@ namespace Logic
             }
         }
 
-        public void SymmetricExceptWith(IEnumerable<T> other) //Изменяет текущий набор таким образом, чтобы он содержал только элементы, которые есть либо в нем, либо в указанной коллекции, но не одновременно там и там.
+        /// <summary>
+        /// Modifies the current set so that it contains only elements that are present either in the current set or in the specified collection, but not both.
+        /// </summary>
+        /// <param name="other">Other collection.</param>
+        public void SymmetricExceptWith(IEnumerable<T> other)
         {
             if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
 
@@ -155,7 +220,12 @@ namespace Logic
         #endregion
 
         #region IsSubsetOf, IsSupersetOf, IsProperSupersetOf, IsProperSubsetOf, Overlaps
-        public bool IsSubsetOf(IEnumerable<T> other) //Определяет, является ли набор подмножеством заданной коллекции.
+        /// <summary>
+        /// Determines whether a set is a subset of a specified collection.
+        /// </summary>
+        /// <param name="other">Other collection.</param>
+        /// <returns>True, if set is subset, and false otherwise.</returns>
+        public bool IsSubsetOf(IEnumerable<T> other) 
         {
             if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
             if (this.Count > other.Count()) return false;
@@ -167,7 +237,12 @@ namespace Logic
             return true;
         }
 
-        public bool IsSupersetOf(IEnumerable<T> other) // Определяет, является ли текущий набор надмножеством заданной коллекции.
+        /// <summary>
+        /// Determines whether the current set is a superset of a specified collection.
+        /// </summary>
+        /// <param name="other">Other collection.</param>
+        /// <returns>True, if set is superset, and false otherwise.</returns>
+        public bool IsSupersetOf(IEnumerable<T> other) 
         {
             if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
             if (this.Count < other.Count()) return false;
@@ -179,13 +254,23 @@ namespace Logic
             return true;
         }
 
-        public bool IsProperSupersetOf(IEnumerable<T> other) //Определяет, является ли текущий набор должным (строгим) надмножеством заданной коллекции.
+        /// <summary>
+        /// Determines whether the current set is a proper (strict) superset of a specified collection.
+        /// </summary>
+        /// <param name="other">Other collection.</param>
+        /// <returns>True, if set is proper superset, and false otherwise.</returns>
+        public bool IsProperSupersetOf(IEnumerable<T> other) 
         {
             if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
 
             return IsSupersetOf(other) && this.count != other.Count();
         }
 
+        /// <summary>
+        /// Determines whether the current set is a proper (strict) subset of a specified collection.
+        /// </summary>
+        /// <param name="other">Other collection.</param>
+        /// <returns>True, if set is proper subset, and false otherwise.</returns>
         public bool IsProperSubsetOf(IEnumerable<T> other) //Определяет, является ли текущий набор должным(строгим) подмножеством заданной коллекции.
         {
             if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
@@ -193,7 +278,12 @@ namespace Logic
             return IsSubsetOf(other) && this.count != other.Count();
         }
 
-        public bool Overlaps(IEnumerable<T> other) //Определяет, пересекаются ли текущий набор и указанная коллекция.
+        /// <summary>
+        /// Determines whether the current set overlaps with the specified collection.
+        /// </summary>
+        /// <param name="other">Other collection.</param>
+        /// <returns>True, if set overlaps with the collection, and false otherwise.</returns>
+        public bool Overlaps(IEnumerable<T> other) 
         {
             if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
 
@@ -206,7 +296,12 @@ namespace Logic
         #endregion
 
         #region SetEquals
-        public bool SetEquals(IEnumerable<T> other) //Определяет, содержат ли текущий набор и указанная коллекция одни и те же элементы.
+        /// <summary>
+        /// Determines whether the current set and the specified collection contain the same elements.
+        /// </summary>
+        /// <param name="other">Other collection.</param>
+        /// <returns>True, if they contain the same elements, and false otherwise.</returns>
+        public bool SetEquals(IEnumerable<T> other)
         {
             if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
 
@@ -218,7 +313,12 @@ namespace Logic
         #endregion
 
         #region CopyTo
-        public void CopyTo(T[] array, int arrayIndex) //Копирует элементы коллекции в массив Array, начиная с указанного индекса массива Array
+        /// <summary>
+        /// Copies the elements of the ICollection<T> to an Array, starting at a particular Array index.
+        /// </summary>
+        /// <param name="array">Array to copy.</param>
+        /// <param name="arrayIndex">Start index.</param>
+        public void CopyTo(T[] array, int arrayIndex) 
         {
             if (ReferenceEquals(array, null)) throw new ArgumentNullException($"{nameof(array)} is null.");
             if (arrayIndex < 0) throw new ArgumentException($"{nameof(arrayIndex)} is unsuitable.");
@@ -231,6 +331,10 @@ namespace Logic
         #endregion
 
         #region ToString
+        /// <summary>
+        /// Returns string representation of the set.
+        /// </summary>
+        /// <returns>String representation of the set</returns>
         public override string ToString()
         {
             if (Count == 0) return "Set is empty.";
