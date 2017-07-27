@@ -42,6 +42,7 @@
   <ItemGroup>
     <Compile Include="Fibonacci\Fibonacci.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Set\Set.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
