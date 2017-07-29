@@ -51,7 +51,7 @@ namespace ConsoleApp
             set2.Add(new Point(6, 6));
             //intersect
             set1.IntersectWith(set2);
-            Console.WriteLine(set1); 
+            Console.WriteLine(set1);
 
             //union
             set1.UnionWith(set2);
@@ -91,6 +91,22 @@ namespace ConsoleApp
             set2 = new Set<Point> { new Point(10, 10) };
             Console.WriteLine(set1.Overlaps(set2)); //false
 
+            #endregion
+
+            #region Matrices
+            SquareMatrix<int> matr = new SquareMatrix<int>(2, new int[] { 1, 2, 3 });
+            SquareMatrix<int> smatr = new SymmetricMatrix<int>(3, new int[] { 1 });
+            SquareMatrix<int> dmatr = new DiagonalMatrix<int>(4, new int[]{ 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 4 });
+
+            smatr.NewElement += dmatr.NewElementMessage; //diagonal matrix subscribes to the event
+            smatr.NewElement += matr.NewElementMessage; //square matrix subscribes to the event
+
+            smatr.ChangeElement(9, 1, 1);
+            
+            smatr.NewElement -= matr.NewElementMessage; //square matrix unsubscribes to the event
+
+            smatr.ChangeElement(9, 2, 2);
+            Console.WriteLine(smatr);
             #endregion
 
         }
