@@ -38,5 +38,13 @@ namespace Logic.Tests
             SquareMatrix<int> matr = new SquareMatrix<int>(2, new int[] { 1 });
             Assert.Throws<ArgumentNullException>(() => MatrixOperation.Sum<int>(matr, null));
         }
+
+        [Test]
+        public void Sum_MatricesHaveDifferentSizes_TrowArgumentException()
+        {
+            SquareMatrix<int> matr = new SquareMatrix<int>(3, new int[] { 1 });
+            SquareMatrix<int> smatr = new SquareMatrix<int>(2, new int[] { 2 });
+            Assert.Throws<ArgumentException>(() => MatrixOperation.Sum<int>(matr, smatr));
+        }
     }
 }

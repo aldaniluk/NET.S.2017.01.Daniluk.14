@@ -20,6 +20,7 @@ namespace Logic
         {
             if (ReferenceEquals(lhs, null)) throw new ArgumentNullException($"{nameof(lhs)} is null.");
             if (ReferenceEquals(rhs, null)) throw new ArgumentNullException($"{nameof(rhs)} is null.");
+            if (lhs.Size != rhs.Size) throw new ArgumentException($"{nameof(lhs)} and {nameof(rhs)} have different sizes and can't be summarized.");
 
             SquareMatrix<T> result = new SquareMatrix<T>(lhs.Size);
 
