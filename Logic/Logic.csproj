@@ -40,6 +40,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BinarySearchTree\BinarySearchTree.cs" />
+    <Compile Include="BinarySearchTree\Entites\Book.cs" />
+    <Compile Include="BinarySearchTree\Comparers\BookComparerByYear.cs" />
+    <Compile Include="BinarySearchTree\Comparers\Int32Comparer.cs" />
+    <Compile Include="BinarySearchTree\Node.cs" />
+    <Compile Include="BinarySearchTree\Entites\PointStruct.cs" />
+    <Compile Include="BinarySearchTree\Comparers\PointStructComparerByX.cs" />
+    <Compile Include="BinarySearchTree\Comparers\StringComparer.cs" />
     <Compile Include="Fibonacci\Fibonacci.cs" />
     <Compile Include="Matrices\DiagonalMatrix.cs" />
     <Compile Include="Matrices\MatrixOperation.cs" />
