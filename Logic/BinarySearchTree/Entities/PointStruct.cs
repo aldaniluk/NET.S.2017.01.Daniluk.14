@@ -2,6 +2,9 @@
 
 namespace Logic
 {
+    /// <summary>
+    /// Struct for representation a point entity.
+    /// </summary>
     public struct PointStruct
     {
         public int X { get; }

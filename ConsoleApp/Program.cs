@@ -118,7 +118,7 @@ namespace ConsoleApp
                 Console.WriteLine(i);
             }
 
-            BinarySearchTree<int> itreeMyComparer = new BinarySearchTree<int>(new int[] { -5, -7, 3, -20, -1, 10, -4, 2 }, new Int32Comparer());
+            BinarySearchTree<int> itreeMyComparer = new BinarySearchTree<int>(new int[] { -5, -7, 3, -20, -1, 10, -4, 2 }, new Int32ComparerByAbs());
             //foreach (var i in itreeMyComparer.PreorderTraversal())
             //{
             //    Console.WriteLine(i);
@@ -166,7 +166,7 @@ namespace ConsoleApp
                 Console.WriteLine(i); //k a b c z r 
             }
 
-            BinarySearchTree<string> streeMyComparer = new BinarySearchTree<string>(new string[] { "333",  "1", "4444", "55555", "22" }, new Logic.StringComparer());
+            BinarySearchTree<string> streeMyComparer = new BinarySearchTree<string>(new string[] { "333",  "1", "4444", "55555", "22" }, new Logic.StringComparerByLength());
             foreach (var i in streeMyComparer.PreorderTraversal())
             {
                 Console.WriteLine(i); //333 1 22 4444 55555

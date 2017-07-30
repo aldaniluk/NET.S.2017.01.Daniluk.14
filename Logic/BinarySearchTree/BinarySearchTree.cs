@@ -416,7 +416,6 @@ namespace Logic
             if (element is IComparable || element is IComparable<T>)
                 return Comparer<T>.Default;
             throw new ArgumentException($"In type {typeof(T)} there isn't default comparer!");
-            
         }
         #endregion
 
