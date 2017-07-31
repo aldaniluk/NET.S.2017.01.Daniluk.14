@@ -10,12 +10,13 @@ namespace Logic
     /// Generic collection set.
     /// </summary>
     /// <typeparam name="T">Type for substitution.</typeparam>
-    public class Set<T> : ISet<T> where T: class, IEquatable<T>
+    public class Set<T> : ISet<T> where T: class
     {
         #region fields      
         private T[] array;
         private int capacity = 8;
         private int count;
+        private readonly IEqualityComparer<T> equalityComparer;
         #endregion
 
         #region properties
@@ -41,8 +42,9 @@ namespace Logic
         /// <summary>
         /// Ctor without parameters.
         /// </summary>
-        public Set()
+        public Set(IEqualityComparer<T> equalityComparer = null)
         {
+            this.equalityComparer = ReferenceEquals(equalityComparer, null) ? EqualityComparer<T>.Default : equalityComparer;
             array = new T[capacity];
         }
 
@@ -50,9 +52,10 @@ namespace Logic
         /// Ctor with parameter.
         /// </summary>
         /// <param name="capacity">Initial size of set.</param>
-        public Set(int capacity)
+        public Set(int capacity, IEqualityComparer<T> equalityComparer = null)
         {
             if (capacity <= 0) throw new ArgumentException($"{nameof(capacity)} is unsuitable.");
+            this.equalityComparer = ReferenceEquals(equalityComparer, null) ? EqualityComparer<T>.Default : equalityComparer;
 
             this.capacity = capacity;
             array = new T[capacity];
@@ -62,9 +65,10 @@ namespace Logic
         /// Ctor with parameter.
         /// </summary>
         /// <param name="collection">Collection to copy elements into set.</param>
-        public Set(IEnumerable<T> collection)
+        public Set(IEnumerable<T> collection, IEqualityComparer<T> equalityComparer = null)
         {
             if (ReferenceEquals(collection, null)) throw new ArgumentNullException($"{nameof(collection)} is null.");
+            this.equalityComparer = ReferenceEquals(equalityComparer, null) ? EqualityComparer<T>.Default : equalityComparer;
 
             foreach (var item in collection)
             {
@@ -123,7 +127,7 @@ namespace Logic
             int index = 0;
             for (int i = 0; i < Count; i++)
             {
-                if (array[i].Equals(item)) index = i;
+                if (equalityComparer.Equals(array[i], item)) index = i;
             }
             array[index] = array[Count - 1];
             array[Count - 1] = default(T);
@@ -140,7 +144,7 @@ namespace Logic
         {
             for (int i = 0; i < count; i++)
             {
-                if (array[i].Equals(item))
+                if (equalityComparer.Equals(array[i], item))
                     return true;
             }
             return false;

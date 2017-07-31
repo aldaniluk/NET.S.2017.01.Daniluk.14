@@ -42,6 +42,7 @@ namespace ConsoleApp
             Point[] points = new Point[4];
             //copyto
             set1.CopyTo(points, 0);
+            Console.WriteLine("Copy to: " + set1.Count);
             foreach (var p in points)
             {
                 Console.WriteLine(p);
