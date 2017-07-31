@@ -1,6 +1,7 @@
 ﻿using System;
 using Logic;
 using System.Collections.Generic;
+using System.Numerics;
 
 namespace ConsoleApp
 {
@@ -9,11 +10,12 @@ namespace ConsoleApp
         static void Main(string[] args)
         {
             #region Fibonacci
-            IEnumerable<int> numerator = Fibonacci.Generate(8);
-            foreach (int i in numerator)
+            IEnumerable<BigInteger> numerator = Fibonacci.Generate(100);
+            foreach (var i in numerator)
             {
-                Console.WriteLine(i);
+                Console.Write(i + " ");
             }
+            Console.WriteLine();
             #endregion
 
             #region Set
