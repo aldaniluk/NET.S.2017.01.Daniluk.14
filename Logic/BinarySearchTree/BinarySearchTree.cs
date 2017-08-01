@@ -14,7 +14,7 @@ namespace Logic
         #region fields
         private Node<T> root;
         private int count;
-        private IComparer<T> comparer;
+        private readonly Comparison<T> comparison;
         #endregion
 
         #region properties
@@ -39,20 +39,38 @@ namespace Logic
         #endregion
 
         #region ctors
-        //public BinarySearchTree(IComparer<T> comparer = null)
-        //{
-        //    this.comparer = ReferenceEquals(comparer, null) ? Comparer<T>.Default : comparer;
-        //}
+        /// <summary>
+        /// Ctor.
+        /// </summary>
+        public BinarySearchTree()
+        {
+            this.comparison = DefaultCompare();
+        }
+
+        /// <summary>
+        /// Ctor.
+        /// </summary>
+        /// <param name="comparison">A way of comparing elements.</param>
+        public BinarySearchTree(Comparison<T> comparison)
+        {
+            this.comparison = ReferenceEquals(comparison, null) ? DefaultCompare() : comparison;
+        }
+
+        /// <summary>
+        /// Ctor.
+        /// </summary>
+        /// <param name="comparer">A way of comparing elements.</param>
+        public BinarySearchTree(IComparer<T> comparer) : this(comparer.Compare) { }
+
 
         /// <summary>
         /// Ctor with parameters.
         /// </summary>
         /// <param name="value">Value to insert to the BST.</param>
-        /// <param name="comparer">A way of comparing elements.</param>
-        public BinarySearchTree(T value, IComparer<T> comparer = null)
+        public BinarySearchTree(T value)
         {
             if (ReferenceEquals(value, null)) throw new ArgumentNullException($"{nameof(value)} is null.");
-            this.comparer = ReferenceEquals(comparer, null) ? DefaultComparer(value) : comparer;
+            this.comparison = DefaultCompare();
             Root = new Node<T>(value);
             count++;
         }
@@ -60,18 +78,61 @@ namespace Logic
         /// <summary>
         /// Ctor with parameters.
         /// </summary>
-        /// <param name="values">Array of elements to insert to the BST.</param>
+        /// <param name="value">Value to insert to the BST.</param>
+        /// <param name="comparison">A way of comparing elements.</param>
+        public BinarySearchTree(T value, Comparison<T> comparison) 
+        {
+            if (ReferenceEquals(value, null)) throw new ArgumentNullException($"{nameof(value)} is null.");
+            this.comparison = ReferenceEquals(comparison, null) ? DefaultCompare() : comparison;
+            Root = new Node<T>(value);
+            count++;
+        }
+
+        /// <summary>
+        /// Ctor with parameters.
+        /// </summary>
+        /// <param name="value">Value to insert to the BST.</param>
         /// <param name="comparer">A way of comparing elements.</param>
-        public BinarySearchTree(T[] values, IComparer<T> comparer = null)
+        public BinarySearchTree(T value, IComparer<T> comparer) : this(value, comparer.Compare) { }
+
+
+        /// <summary>
+        /// Ctor with parameters.
+        /// </summary>
+        /// <param name="values">Array of elements to insert to the BST.</param>
+        public BinarySearchTree(T[] values)
         {
             if (ReferenceEquals(values, null)) throw new ArgumentNullException($"{nameof(values)} is null.");
             if (values.Length == 0) throw new ArgumentException($"{nameof(values)} is empty.");
-            this.comparer = ReferenceEquals(comparer, null) ? DefaultComparer(values[0]) : comparer;
+            this.comparison = DefaultCompare();
             foreach (var v in values)
             {
                 Add(v);
             }
         }
+
+        /// <summary>
+        /// Ctor with parameters.
+        /// </summary>
+        /// <param name="values">Array of elements to insert to the BST.</param>
+        /// <param name="comparison">A way of comparing elements.</param>
+        public BinarySearchTree(T[] values, Comparison<T> comparison)
+        {
+            if (ReferenceEquals(values, null)) throw new ArgumentNullException($"{nameof(values)} is null.");
+            if (values.Length == 0) throw new ArgumentException($"{nameof(values)} is empty.");
+            this.comparison = ReferenceEquals(comparison, null) ? DefaultCompare() : comparison;
+            foreach (var v in values)
+            {
+                Add(v);
+            }
+        }
+
+        /// <summary>
+        /// Ctor with parameters.
+        /// </summary>
+        /// <param name="values">Array of elements to insert to the BST.</param>
+        /// <param name="comparer">A way of comparing elements.</param>
+        public BinarySearchTree(T[] values, IComparer<T> comparer) : this(values, comparer.Compare) { }
         #endregion
 
         #region public methods
@@ -89,12 +150,12 @@ namespace Logic
 
             while (node != null)
             {
-                if (comparer.Compare(item, node.Value) < 0)
+                if (comparison.Invoke(item, node.Value) < 0)
                 {
                     parent = node;
                     node = node.Left;
                 }
-                else if (comparer.Compare(item, node.Value) > 0)
+                else if (comparison.Invoke(item, node.Value) > 0)
                 {
                     parent = node;
                     node = node.Right;
@@ -103,7 +164,7 @@ namespace Logic
             if (ReferenceEquals(Root, null)) Root = new Node<T>(item);
             else
             {
-                if (comparer.Compare(parent.Value, item) > 0)
+                if (comparison.Invoke(parent.Value, item) > 0)
                     parent.Left = new Node<T>(item);
                 else
                     parent.Right = new Node<T>(item);
@@ -133,9 +194,9 @@ namespace Logic
 
             while (node != null)
             {
-                if (comparer.Compare(node.Value, item) == 0)
+                if (comparison.Invoke(node.Value, item) == 0)
                     return true;
-                else if (comparer.Compare(node.Value, item) > 0)
+                else if (comparison.Invoke(node.Value, item) > 0)
                     node = node.Left;
                 else 
                     node = node.Right;
@@ -191,9 +252,9 @@ namespace Logic
 
             while (node != null)
             {
-                if (comparer.Compare(node.Value, item) == 0)
+                if (comparison.Invoke(node.Value, item) == 0)
                     return node;
-                else if (comparer.Compare(node.Value, item) > 0)
+                else if (comparison.Invoke(node.Value, item) > 0)
                     node = node.Left;
                 else
                     node = node.Right;
@@ -212,7 +273,7 @@ namespace Logic
             if (ReferenceEquals(item, null)) throw new ArgumentNullException($"{nameof(item)} is null.");
 
             if (ReferenceEquals(Root, null)) return null;
-            if (comparer.Compare(Root.Value, item) == 0) return null;
+            if (comparison.Invoke(Root.Value, item) == 0) return null;
             if (!Contains(item)) return null;
 
             Node<T> node = Root;
@@ -221,15 +282,15 @@ namespace Logic
             {
                 if (node.Left != null)
                 {
-                    if (comparer.Compare(node.Left.Value, item) == 0) return node;
+                    if (comparison.Invoke(node.Left.Value, item) == 0) return node;
                 }
                 if (node.Right != null)
                 {
-                    if (comparer.Compare(node.Right.Value, item) == 0) return node;
+                    if (comparison.Invoke(node.Right.Value, item) == 0) return node;
                 }
-                if (comparer.Compare(node.Value, item) > 0)
+                if (comparison.Invoke(node.Value, item) > 0)
                     node = node.Left;
-                else if (comparer.Compare(node.Value, item) < 0)
+                else if (comparison.Invoke(node.Value, item) < 0)
                     node = node.Right;
             }
 
@@ -239,7 +300,7 @@ namespace Logic
         /// <summary>
         /// Preorder traversal of the BST.
         /// </summary>
-        /// <returns>Object to iterate.</returns>
+        /// <returns>Traversal of the BST.</returns>
         public IEnumerable<Node<T>> PreorderTraversal()
         {
             Node<T> current = Root;
@@ -262,7 +323,7 @@ namespace Logic
         /// <summary>
         /// Inorder traversal of the BST.
         /// </summary>
-        /// <returns>Object to iterate.</returns>
+        /// <returns>Traversal of the BST.</returns>
         public IEnumerable<Node<T>> InorderTraversal() 
         {
             Node<T> current = Root;
@@ -288,7 +349,7 @@ namespace Logic
         /// <summary>
         /// Postorder traversal of the BST.
         /// </summary>
-        /// <returns>Object to iterate.</returns>
+        /// <returns>Traversal of the BST.</returns>
         public IEnumerable<Node<T>> PostorderTraversal()
         {
             Node<T> lastVisited = Root;
@@ -300,8 +361,8 @@ namespace Logic
             {
                 Node<T> next = stack.Peek();
 
-                bool finishedSubtreesR = next.Right != null ? (comparer.Compare(next.Right.Value, lastVisited.Value) == 0) : false;
-                bool finishedSubtreesL = next.Left != null ? (comparer.Compare(next.Left.Value, lastVisited.Value) == 0) : false;
+                bool finishedSubtreesR = next.Right != null ? (comparison.Invoke(next.Right.Value, lastVisited.Value) == 0) : false;
+                bool finishedSubtreesL = next.Left != null ? (comparison.Invoke(next.Left.Value, lastVisited.Value) == 0) : false;
                 bool isLeaf = (next.Left == null && next.Right == null);
 
                 if (finishedSubtreesR || finishedSubtreesL || isLeaf)
@@ -346,12 +407,12 @@ namespace Logic
             }
             if (findparent.Left != null)
             {
-                if (comparer.Compare(find.Value, findparent.Left.Value) == 0)
+                if (comparison.Invoke(find.Value, findparent.Left.Value) == 0)
                     findparent.Left = null;
             }
             if (findparent.Right != null)
             {
-                if (comparer.Compare(find.Value, findparent.Right.Value) == 0)
+                if (comparison.Invoke(find.Value, findparent.Right.Value) == 0)
                     findparent.Right = null;
             }
             return true;
@@ -364,7 +425,7 @@ namespace Logic
                 Root = find.Left;
                 return true;
             }
-            if (comparer.Compare(find.Value, findparent.Value) < 0)
+            if (comparison.Invoke(find.Value, findparent.Value) < 0)
                 findparent.Left = find.Left;
             else
                 findparent.Right = find.Left;
@@ -380,7 +441,7 @@ namespace Logic
                 return true;
             }
             find.Right.Left = find.Left;
-            if (comparer.Compare(find.Value, findparent.Value) < 0)
+            if (comparison.Invoke(find.Value, findparent.Value) < 0)
                 findparent.Left = find.Right;
             else
                 findparent.Right = find.Right;
@@ -404,18 +465,25 @@ namespace Logic
                 Root = leftmost;
                 return true;
             }
-            if (comparer.Compare(find.Value, findparent.Value) < 0)
+            if (comparison.Invoke(find.Value, findparent.Value) < 0)
                 findparent.Left = leftmost;
             else
                 findparent.Right = leftmost;
             return true;
         }
 
-        private IComparer<T> DefaultComparer(T element)
+        private Comparison<T> DefaultCompare() 
         {
-            if (element is IComparable || element is IComparable<T>)
-                return Comparer<T>.Default;
-            throw new ArgumentException($"In type {typeof(T)} there isn't default comparer!");
+            IComparer<T> myComparer = Comparer<T>.Default;
+            try
+            {
+                myComparer.Compare(default(T), default(T));
+            }
+            catch (Exception)
+            {
+                throw new ArgumentException($"In type {typeof(T)} there isn't default comparer!");
+            }
+            return Comparer<T>.Default.Compare;
         }
         #endregion
 
