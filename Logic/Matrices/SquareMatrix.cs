@@ -9,17 +9,10 @@ namespace Logic
     /// Class for the representation of the square matrix.
     /// </summary>
     /// <typeparam name="T">Type for substitution.</typeparam>
-    public class SquareMatrix<T> : IEquatable<SquareMatrix<T>>
+    public class SquareMatrix<T> : AbstractMatrix<T>
     {
         #region fields
-        protected T[,] array;
-        #endregion
-
-        #region properties
-        /// <summary>
-        /// Size of the square matrix.
-        /// </summary>
-        public int Size { get; }
+        private T[,] array;
         #endregion
 
         #region ctors
@@ -28,7 +21,7 @@ namespace Logic
         /// </summary>
         public SquareMatrix()
         {
-            Size = 1;
+            size = 1;
             array = new T[Size, Size];
         }
 
@@ -39,7 +32,7 @@ namespace Logic
         public SquareMatrix(int size)
         {
             CheckSize(size);
-            Size = size;
+            this.size = size;
             array = new T[Size, Size];
         }
 
@@ -54,51 +47,13 @@ namespace Logic
         }
         #endregion
 
-        /// <summary>
-        /// Element change event.
-        /// </summary>
-        public event EventHandler<NewElementEventArgs> NewElement = delegate { };
-
         #region public methods
-        /// <summary>
-        /// Indexer.
-        /// </summary>
-        /// <param name="i">Number of row.</param>
-        /// <param name="j">Number of column.</param>
-        /// <returns>Element in appropriate position.</returns>
-        public T this[int i, int j]
-        {
-            get
-            {
-                if (i > array.GetLength(0) || i <= 0) throw new ArgumentException($"Index {nameof(i)} is unsuitable.");
-                if (j > array.GetLength(0) || j <= 0) throw new ArgumentException($"Index {nameof(j)} is unsuitable.");
-                return array[i - 1, j - 1];
-            }
-        }
-
-        /// <summary>
-        /// Change an element.
-        /// </summary>
-        /// <param name="element">Element to insert.</param>
-        /// <param name="i">Row number.</param>
-        /// <param name="j">Column number.</param>
-        public void ChangeElement(T element, int i, int j)
-        {
-            if (i > array.GetLength(0) || i <= 0) throw new ArgumentException($"Index {nameof(i)} is unsuitable.");
-            if (j > array.GetLength(0) || j <= 0) throw new ArgumentException($"Index {nameof(j)} is unsuitable.");
-
-            array[i - 1, j - 1] = element;
-            IsSuitableMatrix();
-
-            NewElement.Invoke(this, new NewElementEventArgs(GetType().ToString(), i, j));
-        }
-
         /// <summary>
         /// Reaction to an element change event. 
         /// </summary>
         /// <param name="sender">Event source.</param>
         /// <param name="e">Object, that contains data about event.</param>
-        public virtual void NewElementMessage(object sender, NewElementEventArgs e)
+        public void NewElementMessage(object sender, NewElementEventArgs e)
         {
             Console.WriteLine($"Square matrix! Element was changed in {e.Message} at position ({e.I}, {e.J})");
         }
@@ -120,38 +75,6 @@ namespace Logic
             }
             return result.ToString();
         }
-
-        /// <summary>
-        /// Checks two objects for equality.
-        /// </summary>
-        /// <param name="obj">Second object to check.</param>
-        /// <returns>True, if objects are equal, and false otherwise.</returns>
-        public override bool Equals(object obj)
-        {
-            SquareMatrix<T> matr = obj as SquareMatrix<T>;
-            return Equals(matr);
-        }
-
-        /// <summary>
-        /// Checks two matrices for equality.
-        /// </summary>
-        /// <param name="obj">Second matrix to check.</param>
-        /// <returns>True, if matrices are equal, and false otherwise.</returns>
-        public bool Equals(SquareMatrix<T> obj)
-        {
-            if (ReferenceEquals(obj, null)) return false;
-            if (ReferenceEquals(obj, this)) return true;
-            if (Size != obj.Size) return false;
-
-            for (int i = 1; i <= array.GetLength(0); i++)
-            {
-                for (int j = 1; j <= array.GetLength(1); j++)
-                {
-                    if (!this[i, j].Equals(obj[i, j])) return false;
-                }
-            }
-            return true;
-        }
         #endregion
 
         #region private & protected methods
@@ -168,18 +91,19 @@ namespace Logic
                     inputArrayIndex++;
                 }
             }
-            IsSuitableMatrix();
         }
 
-        /// <summary>
-        /// Checks if matrix is suitable.
-        /// </summary>
-        /// <returns>True, if matrix is suitable, and false otherwise.</returns>
-        protected virtual bool IsSuitableMatrix() => true;
-
-        private void CheckSize(int size)
+        protected override T GetElement(int i, int j)
         {
-            if (size <= 0) throw new ArgumentException($"{nameof(size)} can't be less than or equal to 0.");
+            CheckIndexes(i, j);
+            return array[i, j];
+        }
+
+        protected override void SetElement(T element, int i, int j)
+        {
+            CheckIndexes(i, j);
+            if (ReferenceEquals(element, null)) throw new ArgumentNullException($"{nameof(element)} is null.");
+            array[i, j] = element;
         }
         #endregion
     }

@@ -7,18 +7,6 @@ namespace Logic.Tests
     class MatrixTest
     {
         [Test]
-        public void NewSymmetricMatrix_NotSymetricInputElements_TrowArgumentException()
-        {
-            Assert.Throws<ArgumentException>(() => new SymmetricMatrix<int>(2, new int[] { 1, 2, 1, 1 }));
-        }
-
-        [Test]
-        public void NewDiagonalMatrix_NotDiagonalInputElements_TrowArgumentException()
-        {
-            Assert.Throws<ArgumentException>(() => new DiagonalMatrix<int>(2, new int[] { 1, 2, 0, 0 }));
-        }
-
-        [Test]
         public void NewSquareMatrix_NotSuitableSize_TrowArgumentException()
         {
             Assert.Throws<ArgumentException>(() => new DiagonalMatrix<int>(0, new int[] { 1 }));

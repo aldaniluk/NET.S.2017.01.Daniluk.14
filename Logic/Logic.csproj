@@ -51,6 +51,8 @@
     <Compile Include="BinarySearchTree\Comparers\StringComparerByLength.cs" />
     <Compile Include="Fibonacci\Fibonacci.cs" />
     <Compile Include="Matrices\DiagonalMatrix.cs" />
+    <Compile Include="Matrices\AbstractMatrix.cs" />
+    <Compile Include="Matrices\MatrixFactory.cs" />
     <Compile Include="Matrices\MatrixOperation.cs" />
     <Compile Include="Matrices\NewElementEventArgs.cs" />
     <Compile Include="Matrices\SquareMatrix.cs" />

@@ -1,6 +1,5 @@
 ﻿using NUnit.Framework;
 using System;
-using Logic;
 
 namespace Logic.Tests
 {
@@ -10,11 +9,20 @@ namespace Logic.Tests
         [Test]
         public void Sum_IntInputValues_PositiveTest()
         {
-            SquareMatrix<int> matr = new SquareMatrix<int>(2, new int[] { 1, 2, 3, 4 });
-            SquareMatrix<int> smatr = new SymmetricMatrix<int>(2, new int[] {1,0,0,1});
-            SquareMatrix<int> actualResult = MatrixOperation.Sum<int>(matr, smatr);
-            SquareMatrix<int> expectedResult = new SquareMatrix<int>(2, new int[] { 2, 2, 3, 5 });
+            AbstractMatrix<int> matr = new SquareMatrix<int>(2, new int[] { 1, 2, 3, 4 });
+            AbstractMatrix<int> smatr = new SymmetricMatrix<int>(2, new int[] {1, 1});
+            AbstractMatrix<int> actualResult = matr.Sum<int>(smatr);
+            AbstractMatrix<int> expectedResult = new SquareMatrix<int>(2, new int[] { 2, 3, 4, 4 });
             Assert.IsTrue(actualResult.Equals(expectedResult));
+        }
+
+        [Test]
+        public void Sum_SquarePlusSquareEqualsDiagonal_PositiveTest()
+        {
+            AbstractMatrix<int> matr = new SquareMatrix<int>(2, new int[] { 1, 2, 3, 4 });
+            AbstractMatrix<int> smatr = new SquareMatrix<int>(2, new int[] { 1, -2, -3, 4 });
+            AbstractMatrix<int> actualResult = matr.Sum<int>(smatr);
+            Assert.IsTrue(actualResult.GetType().ToString() == "Logic.DiagonalMatrix`1[System.Int32]");
         }
 
         [Test]

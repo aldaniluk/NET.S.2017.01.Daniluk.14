@@ -98,9 +98,21 @@ namespace ConsoleApp
 
             #region Matrices
             SquareMatrix<int> matr = new SquareMatrix<int>(2, new int[] { 1, 2, 3 });
-            SquareMatrix<int> smatr = new SymmetricMatrix<int>(3, new int[] { 1 });
-            SquareMatrix<int> dmatr = new DiagonalMatrix<int>(4, new int[] { 1, 0, 0, 0, 0, 2, 0, 0, 0, 0, 3, 0, 0, 0, 0, 4 });
+            //matr.ChangeElement(9, 2, 2); 
+            Console.WriteLine(matr);
+            //Console.WriteLine(matr[2,2]);
 
+            SymmetricMatrix<int> smatr = new SymmetricMatrix<int>(3, new int[] { 1, 2, 3 });
+            //smatr.ChangeElement(9, 3, 2); //two elements change, because matrix is symmetric
+            Console.WriteLine(smatr);
+            //Console.WriteLine(smatr[2, 3]); //==Console.WriteLine(smatr[3, 2]);
+
+            DiagonalMatrix<int> dmatr = new DiagonalMatrix<int>(4, new int[] { 1, 2, 3, 4 });
+            //dmatr.ChangeElement(9, 1, 2); //exception - we can't change an element
+            Console.WriteLine(dmatr);
+            //Console.WriteLine(dmatr[3,3]);
+
+            //event >
             smatr.NewElement += dmatr.NewElementMessage; //diagonal matrix subscribes to the event
             smatr.NewElement += matr.NewElementMessage; //square matrix subscribes to the event
 
@@ -109,7 +121,14 @@ namespace ConsoleApp
             smatr.NewElement -= matr.NewElementMessage; //square matrix unsubscribes to the event
 
             smatr.ChangeElement(9, 2, 2);
-            Console.WriteLine(smatr);
+
+            //sum >
+            AbstractMatrix<int> matr1 = new SquareMatrix<int>(2, new int[] { 1, 2, 3, 4 });
+            AbstractMatrix<int> smatr1 = new SquareMatrix<int>(2, new int[] { 1, -2, -3, 4 });
+            AbstractMatrix<int> actualResult = matr1.Sum<int>(smatr1);
+            
+            Console.WriteLine(actualResult.GetType()); //diagonal!!!
+            Console.WriteLine(actualResult);
             #endregion
 
             #region BinarySearchTree
@@ -132,7 +151,7 @@ namespace ConsoleApp
             //    Console.WriteLine(i);
             //}
             itreeMyComparer.Remove(21);
-            
+
             Console.WriteLine("Preorder");
             foreach (var i in itreeMyComparer.PreorderTraversal())
             {
@@ -185,7 +204,7 @@ namespace ConsoleApp
                 new Book("CLR via C#, Fourth Edition", "Richter Jeffrey", 2012),
                 new Book("Alice's Adventures in Wonderland", "Carroll Lewis", 1865),
             }); //default comparison (by author)
-            
+
             foreach (var i in btree.PreorderTraversal())
             {
                 Console.WriteLine(i); //London Bykau Carroll Rowling Richter
