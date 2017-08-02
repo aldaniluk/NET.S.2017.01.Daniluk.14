@@ -44,7 +44,7 @@ namespace Logic
         /// </summary>
         public Set(IEqualityComparer<T> equalityComparer = null)
         {
-            this.equalityComparer = ReferenceEquals(equalityComparer, null) ? EqualityComparer<T>.Default : equalityComparer;
+            this.equalityComparer = equalityComparer == null ? EqualityComparer<T>.Default : equalityComparer;
             array = new T[capacity];
         }
 
@@ -55,7 +55,7 @@ namespace Logic
         public Set(int capacity, IEqualityComparer<T> equalityComparer = null)
         {
             if (capacity <= 0) throw new ArgumentException($"{nameof(capacity)} is unsuitable.");
-            this.equalityComparer = ReferenceEquals(equalityComparer, null) ? EqualityComparer<T>.Default : equalityComparer;
+            this.equalityComparer = equalityComparer == null ? EqualityComparer<T>.Default : equalityComparer;
 
             this.capacity = capacity;
             array = new T[capacity];
@@ -67,8 +67,11 @@ namespace Logic
         /// <param name="collection">Collection to copy elements into set.</param>
         public Set(IEnumerable<T> collection, IEqualityComparer<T> equalityComparer = null)
         {
-            if (ReferenceEquals(collection, null)) throw new ArgumentNullException($"{nameof(collection)} is null.");
-            this.equalityComparer = ReferenceEquals(equalityComparer, null) ? EqualityComparer<T>.Default : equalityComparer;
+            if (collection == null) throw new ArgumentNullException($"{nameof(collection)} is null.");
+            this.equalityComparer = equalityComparer == null ? EqualityComparer<T>.Default : equalityComparer;
+
+            this.capacity = collection.Count();
+            array = new T[capacity]; 
 
             foreach (var item in collection)
             {
@@ -84,7 +87,7 @@ namespace Logic
         /// <returns>Object IEnumerator<T> to iterate.</returns>
         public IEnumerator<T> GetEnumerator()
         {
-            for(int i = 0; i < count; i++)
+            for (int i = 0; i < count; i++)
             {
                 yield return array[i];
             }
@@ -94,6 +97,72 @@ namespace Logic
         #endregion
 
         #region public methods
+        #region static methods
+        /// <summary>
+        /// Returns set that contains all elements that are present in the in both collections.
+        /// </summary>
+        /// <param name="lhs">One collection.</param>
+        /// <param name="rhs">Another collection.</param>
+        /// <returns>Set that contains all elements that are present in the in both collections.</returns>
+        public static Set<T> Union(IEnumerable<T> lhs, IEnumerable<T> rhs, IEqualityComparer<T> equalityComparer = null)
+        {
+            if (lhs == null) throw new ArgumentNullException($"{nameof(lhs)} is null.");
+            if (rhs == null) throw new ArgumentNullException($"{nameof(rhs)} is null.");
+
+            Set<T> result = new Set<T>(lhs.Union<T>(rhs), equalityComparer);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns set that contains only elements that are also in both collections at once.
+        /// </summary>
+        /// <param name="lhs">One collection.</param>
+        /// <param name="rhs">Another collection.</param>
+        /// <returns>Set that contains only elements that are also in both collections at once.</returns>
+        public static Set<T> Intersect(IEnumerable<T> lhs, IEnumerable<T> rhs, IEqualityComparer<T> equalityComparer = null)
+        {
+            if (lhs == null) throw new ArgumentNullException($"{nameof(lhs)} is null.");
+            if (rhs == null) throw new ArgumentNullException($"{nameof(rhs)} is null.");
+
+            Set<T> result = new Set<T>(lhs.Intersect<T>(rhs), equalityComparer); 
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns set that contains only elements that present only in left collection.
+        /// </summary>
+        /// <param name="lhs">One collection.</param>
+        /// <param name="rhs">Another collection.</param>
+        /// <returns>Set that contains only elements that present only in left collection.</returns>
+        public static Set<T> Except(IEnumerable<T> lhs, IEnumerable<T> rhs, IEqualityComparer<T> equalityComparer = null)
+        {
+            if (lhs == null) throw new ArgumentNullException($"{nameof(lhs)} is null.");
+            if (rhs == null) throw new ArgumentNullException($"{nameof(rhs)} is null.");
+
+            Set<T> result = new Set<T>(lhs.Except<T>(rhs), equalityComparer);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns set that contains only elements that present only in right collection.
+        /// </summary>
+        /// <param name="lhs">One collection.</param>
+        /// <param name="rhs">Another collection.</param>
+        /// <returns>Set that contains only elements that present only in right collection.</returns>
+        public static Set<T> SymmetricExcept(IEnumerable<T> lhs, IEnumerable<T> rhs, IEqualityComparer<T> equalityComparer = null)
+        {
+            if (lhs == null) throw new ArgumentNullException($"{nameof(lhs)} is null.");
+            if (rhs == null) throw new ArgumentNullException($"{nameof(rhs)} is null.");
+
+            Set<T> result = new Set<T>(rhs.Except<T>(lhs), equalityComparer);
+
+            return result;
+        }
+        #endregion
+
         #region Add, Remove, Contains, Clear
         /// <summary>
         /// Adds an element into the set.
@@ -107,7 +176,8 @@ namespace Logic
             if (this.Contains(item))
                 return false;
 
-            if (IsFull) Expansion();
+            if (IsFull)
+                Expansion();
 
             array[count++] = item;
             return true;
@@ -127,7 +197,8 @@ namespace Logic
             int index = 0;
             for (int i = 0; i < Count; i++)
             {
-                if (equalityComparer.Equals(array[i], item)) index = i;
+                if (equalityComparer.Equals(array[i], item))
+                    index = i;
             }
             array[index] = array[Count - 1];
             array[Count - 1] = default(T);
@@ -168,7 +239,7 @@ namespace Logic
         /// <param name="other">Other collection.</param>
         public void UnionWith(IEnumerable<T> other)
         {
-            if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
+            if (other == null) throw new ArgumentNullException($"{nameof(other)} is null");
 
             foreach(var item in other)
             {
@@ -182,12 +253,14 @@ namespace Logic
         /// <param name="other">Other collection.</param>
         public void IntersectWith(IEnumerable<T> other)
         {
-            if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
+            if (other == null) throw new ArgumentNullException($"{nameof(other)} is null");
 
-            foreach (var item in other)
+            for (int i = 0; i < Count; i++)
             {
-                if (!Contains(item))
-                    Remove(item);
+                if (!other.Contains(array[i], equalityComparer))
+                {
+                    Remove(array[i--]);
+                }
             }
         }
 
@@ -197,7 +270,7 @@ namespace Logic
         /// <param name="other">Other collection.</param>
         public void ExceptWith(IEnumerable<T> other) 
         {
-            if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
+            if (other == null) throw new ArgumentNullException($"{nameof(other)} is null");
 
             foreach (var item in other)
             {
@@ -211,7 +284,7 @@ namespace Logic
         /// <param name="other">Other collection.</param>
         public void SymmetricExceptWith(IEnumerable<T> other)
         {
-            if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
+            if (other == null) throw new ArgumentNullException($"{nameof(other)} is null");
 
             foreach (var item in other)
             {
@@ -231,7 +304,7 @@ namespace Logic
         /// <returns>True, if set is subset, and false otherwise.</returns>
         public bool IsSubsetOf(IEnumerable<T> other) 
         {
-            if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
+            if (other == null) throw new ArgumentNullException($"{nameof(other)} is null");
             if (this.Count > other.Count()) return false;
 
             for (int i = 0; i < Count; i++)
@@ -248,7 +321,7 @@ namespace Logic
         /// <returns>True, if set is superset, and false otherwise.</returns>
         public bool IsSupersetOf(IEnumerable<T> other) 
         {
-            if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
+            if (other == null) throw new ArgumentNullException($"{nameof(other)} is null");
             if (this.Count < other.Count()) return false;
 
             foreach (var item in other)
@@ -265,7 +338,7 @@ namespace Logic
         /// <returns>True, if set is proper superset, and false otherwise.</returns>
         public bool IsProperSupersetOf(IEnumerable<T> other) 
         {
-            if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
+            if (other == null) throw new ArgumentNullException($"{nameof(other)} is null");
 
             return IsSupersetOf(other) && this.count != other.Count();
         }
@@ -277,7 +350,7 @@ namespace Logic
         /// <returns>True, if set is proper subset, and false otherwise.</returns>
         public bool IsProperSubsetOf(IEnumerable<T> other) //Определяет, является ли текущий набор должным(строгим) подмножеством заданной коллекции.
         {
-            if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
+            if (other == null) throw new ArgumentNullException($"{nameof(other)} is null");
 
             return IsSubsetOf(other) && this.count != other.Count();
         }
@@ -289,7 +362,7 @@ namespace Logic
         /// <returns>True, if set overlaps with the collection, and false otherwise.</returns>
         public bool Overlaps(IEnumerable<T> other) 
         {
-            if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
+            if (other == null) throw new ArgumentNullException($"{nameof(other)} is null");
 
             foreach (var item in this)
             {
@@ -307,7 +380,7 @@ namespace Logic
         /// <returns>True, if they contain the same elements, and false otherwise.</returns>
         public bool SetEquals(IEnumerable<T> other)
         {
-            if (ReferenceEquals(other, null)) throw new ArgumentNullException($"{nameof(other)} is null");
+            if (other == null) throw new ArgumentNullException($"{nameof(other)} is null");
 
             if (ReferenceEquals(this, other)) return true;
             if (Count != other.Count()) return false;
@@ -324,30 +397,13 @@ namespace Logic
         /// <param name="arrayIndex">Start index.</param>
         public void CopyTo(T[] array, int arrayIndex) 
         {
-            if (ReferenceEquals(array, null)) throw new ArgumentNullException($"{nameof(array)} is null.");
+            if (array == null) throw new ArgumentNullException($"{nameof(array)} is null.");
             if (arrayIndex < 0) throw new ArgumentException($"{nameof(arrayIndex)} is unsuitable.");
             for (int i = arrayIndex; i < array.Length; i++)
             {
                 if (i - arrayIndex > Count) return;
                 array[i] = this.array[i - arrayIndex];
             }
-        }
-        #endregion
-
-        #region ToString
-        /// <summary>
-        /// Returns string representation of the set.
-        /// </summary>
-        /// <returns>String representation of the set</returns>
-        public override string ToString()
-        {
-            if (Count == 0) return "Set is empty.";
-            StringBuilder str = new StringBuilder();
-            for (int i = 0; i < count; i++)
-            {
-                str.Append(array[i].ToString() + " ");
-            }
-            return str.ToString();
         }
         #endregion
         #endregion
