@@ -15,15 +15,22 @@ namespace Logic
         {
             if (quantity <= 0) throw new ArgumentException($"{nameof(quantity)} is unsuitable.");
 
-            BigInteger prevNumber = -1;
-            BigInteger nextNumber = 1;
-            BigInteger temp;
-            for(int i = 0; i < quantity; i++)
+            return Enumerate();
+
+            IEnumerable<BigInteger> Enumerate()
             {
-                temp = nextNumber;
-                yield return nextNumber += prevNumber;
-                prevNumber = temp;
+                BigInteger prevNumber = -1;
+                BigInteger nextNumber = 1;
+                BigInteger temp;
+
+                for (int i = 0; i < quantity; i++)
+                {
+                    temp = nextNumber;
+                    yield return nextNumber += prevNumber;
+                    prevNumber = temp;
+                }
             }
         }
+
     }
 }
