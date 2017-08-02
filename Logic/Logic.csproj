@@ -45,7 +45,6 @@
     <Compile Include="BinarySearchTree\Entities\Book.cs" />
     <Compile Include="BinarySearchTree\Comparers\BookComparerByYear.cs" />
     <Compile Include="BinarySearchTree\Comparers\Int32ComparerByAbs.cs" />
-    <Compile Include="BinarySearchTree\Node.cs" />
     <Compile Include="BinarySearchTree\Entities\PointStruct.cs" />
     <Compile Include="BinarySearchTree\Comparers\PointStructComparerByX.cs" />
     <Compile Include="BinarySearchTree\Comparers\StringComparerByLength.cs" />
