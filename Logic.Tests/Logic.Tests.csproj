@@ -46,6 +46,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MatricesTests\MatrixComparer.cs" />
     <Compile Include="MatricesTests\MatrixOperationTest.cs" />
     <Compile Include="MatricesTests\MatrixTest.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

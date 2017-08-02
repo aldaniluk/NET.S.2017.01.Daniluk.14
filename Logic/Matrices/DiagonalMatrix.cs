@@ -30,8 +30,7 @@ namespace Logic
         /// <param name="size">Size of the diagonal matrix.</param>
         public DiagonalMatrix(int size)
         {
-            CheckSize(size);
-            this.size = size;
+            Size = size;
             array = new T[Size];
         }
 
@@ -46,48 +45,16 @@ namespace Logic
         }
         #endregion
 
-        #region public methods
-        /// <summary>
-        /// Reaction to an element change event. 
-        /// </summary>
-        /// <param name="sender">Event source.</param>
-        /// <param name="e">Object, that contains data about event.</param>
-        public void NewElementMessage(object sender, NewElementEventArgs e)
-        {
-            Console.WriteLine($"Diagonal matrix! Element was changed in {e.Message} at position ({e.I}, {e.J})");
-        }
-
-        /// <summary>
-        /// Returns string representation of the matrix.
-        /// </summary>
-        /// <returns>String representation of the matrix.</returns>
-        public override string ToString()
-        {
-            StringBuilder result = new StringBuilder();
-            for (int i = 0; i < Size; i++)
-            {
-                for (int j = 0; j < Size; j++)
-                {
-                    if (i == j)
-                        result.Append(array[i].ToString() + ' ');
-                    else
-                        result.Append(default(T).ToString() + ' ');
-                }
-                if (i != Size - 1) result.Append('\n');
-            }
-            return result.ToString();
-        }
-        #endregion
-
         #region private & protected methods
         private void FillMatrix(IEnumerable<T> inputArray)
         {
-            if (ReferenceEquals(inputArray, null)) throw new ArgumentNullException($"{nameof(inputArray)} is null.");
+            if (inputArray == null) throw new ArgumentNullException($"{nameof(inputArray)} is null.");
 
             int inputArrayIndex = 0;
             for (int i = 0; i < Size; i++)
             {
-                if (inputArrayIndex < inputArray.Count()) array[i] = inputArray.ElementAt(inputArrayIndex);
+                if (inputArrayIndex < inputArray.Count())
+                    array[i] = inputArray.ElementAt(inputArrayIndex);
                 inputArrayIndex++;
             }
         }

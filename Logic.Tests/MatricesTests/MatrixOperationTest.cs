@@ -1,5 +1,7 @@
 ﻿using NUnit.Framework;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Logic.Tests
 {
@@ -13,7 +15,7 @@ namespace Logic.Tests
             AbstractMatrix<int> smatr = new SymmetricMatrix<int>(2, new int[] {1, 1});
             AbstractMatrix<int> actualResult = matr.Sum<int>(smatr);
             AbstractMatrix<int> expectedResult = new SquareMatrix<int>(2, new int[] { 2, 3, 4, 4 });
-            Assert.IsTrue(actualResult.Equals(expectedResult));
+            Assert.IsTrue((new MatrixComparer<int>()).Equals(actualResult, expectedResult));
         }
 
         [Test]

@@ -5,7 +5,7 @@ namespace Logic
     /// <summary>
     /// Creates different matrices based on the input values.
     /// </summary>
-    public static class MatrixFactory
+    internal static class MatrixFactory
     {
         /// <summary>
         /// Creates new matrix based on the input values.

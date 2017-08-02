@@ -429,7 +429,7 @@ namespace Logic
 
         private Comparison<T> DefaultCompare()
         {
-            if (typeof(IComparable).IsAssignableFrom(typeof(T)) || typeof(IComparable<T>).IsAssignableFrom(typeof(T)))
+            if (typeof(IComparable).IsAssignableFrom(typeof(T)) || typeof(IComparable<T>).IsAssignableFrom(typeof(T))) //Kate's idea!
                 return Comparer<T>.Default.Compare;
             else
                 throw new ArgumentException($"In type {typeof(T)} there isn't default comparer!");

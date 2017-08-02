@@ -21,7 +21,6 @@ namespace Logic
         /// </summary>
         public SquareMatrix()
         {
-            size = 1;
             array = new T[Size, Size];
         }
 
@@ -31,8 +30,7 @@ namespace Logic
         /// <param name="size">Size of the square matrix.</param>
         public SquareMatrix(int size)
         {
-            CheckSize(size);
-            this.size = size;
+            Size = size;
             array = new T[Size, Size];
         }
 
@@ -47,47 +45,18 @@ namespace Logic
         }
         #endregion
 
-        #region public methods
-        /// <summary>
-        /// Reaction to an element change event. 
-        /// </summary>
-        /// <param name="sender">Event source.</param>
-        /// <param name="e">Object, that contains data about event.</param>
-        public void NewElementMessage(object sender, NewElementEventArgs e)
-        {
-            Console.WriteLine($"Square matrix! Element was changed in {e.Message} at position ({e.I}, {e.J})");
-        }
-
-        /// <summary>
-        /// Returns string representation of the matrix.
-        /// </summary>
-        /// <returns>String representation of the matrix.</returns>
-        public override string ToString()
-        {
-            StringBuilder result = new StringBuilder();
-            for(int i  = 0; i < array.GetLength(0); i++)
-            {
-                for (int j = 0; j < array.GetLength(1); j++)
-                {
-                    result.Append(array[i, j].ToString() + ' ');
-                }
-                if (i != array.GetLength(0)-1) result.Append('\n');
-            }
-            return result.ToString();
-        }
-        #endregion
-
         #region private & protected methods
         private void FillMatrix(IEnumerable<T> inputArray)
         {
-            if (ReferenceEquals(inputArray, null)) throw new ArgumentNullException($"{nameof(inputArray)} is null.");
+            if (inputArray == null) throw new ArgumentNullException($"{nameof(inputArray)} is null.");
 
             int inputArrayIndex = 0;
             for (int i = 0; i < array.GetLength(0); i++)
             {
                 for (int j = 0; j < array.GetLength(1); j++)
                 {
-                    if (inputArrayIndex < inputArray.Count()) array[i, j] = inputArray.ElementAt(inputArrayIndex);
+                    if (inputArrayIndex < inputArray.Count())
+                        array[i, j] = inputArray.ElementAt(inputArrayIndex);
                     inputArrayIndex++;
                 }
             }
